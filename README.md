@@ -1,2 +1,3335 @@
 # IG-COMPLAINT-REGISTER-2.0
 COMPLAINT REGISTER WEBSITE 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>IG Campus | Indra Ganesan College of Engineering</title>
+
+<!-- Firebase (Realtime Database) -->
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/12.19.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+    apiKey: "AIzaSyDp2UZDhB2R5ABGP6bdOR62e3s_Y44WV6k",
+    authDomain: "ig-campus.firebaseapp.com",
+    databaseURL: "https://ig-campus-default-rtdb.firebaseio.com",
+    projectId: "ig-campus",
+    storageBucket: "ig-campus.firebasestorage.app",
+    messagingSenderId: "294618331524",
+    appId: "1:294618331524:web:c97e2293b8d99e1a1cc5d1",
+    measurementId: "G-CLL9VNGY05"
+};
+firebase.initializeApp(firebaseConfig);
+const complaintsRef = firebase.database().ref("igceComplaints");
+</script>
+
+<script>
+(function(){
+    try {
+        var t = localStorage.getItem("igce_theme");
+        if(t === "dark" || (!t && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches)){
+            document.documentElement.classList.add("dark-mode");
+        }
+    } catch(e){}
+})();
+</script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    background:#f4f7fb;
+    color:#172033;
+}
+
+header{
+    background:linear-gradient(135deg,#082c63,#0b5ed7);
+    color:white;
+    padding:18px 6%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 4px 15px rgba(0,0,0,.15);
+}
+
+.logo{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logo-image{
+    width:68px;
+    height:68px;
+    display:block;
+    flex:0 0 auto;
+    max-width:100%;
+    padding:4px;
+    border-radius:12px;
+    background:white;
+    object-fit:contain;
+}
+
+.logo h1{
+    font-size:21px;
+}
+
+.logo p{
+    font-size:12px;
+    opacity:.85;
+}
+
+nav{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+nav button{
+    border:0;
+    background:transparent;
+    color:white;
+    padding:9px 13px;
+    border-radius:7px;
+    cursor:pointer;
+    font-weight:bold;
+    transition:all .2s ease;
+}
+
+nav button:hover{
+    background:rgba(255,255,255,.15);
+}
+
+nav button.active{
+    box-shadow:0 0 0 2px rgba(255,255,255,.25);
+    transform:translateY(-1px);
+}
+
+nav button[data-role="home"].active{
+    background:#ffb703;
+    color:#0d2343;
+}
+
+nav button[data-role="student"].active{
+    background:#198754;
+}
+
+nav button[data-role="admin"].active{
+    background:#0d6efd;
+}
+
+nav button[data-role="workers"].active{
+    background:#fd7e14;
+    color:white;
+}
+
+home-page,
+.home-page,
+.home-hero,
+.home-section,
+.feature-grid,
+.experience-grid,
+.quick-links,
+.mini-stats,
+.btn-row,
+.cta-row,
+.hero-image-panel,
+.feature-card,
+.experience-card,
+.stat-box,
+.quick-link,
+.about-panel{
+    box-sizing:border-box;
+}
+
+.corner-menu{
+    position:fixed;
+    left:18px;
+    top:18px;
+    z-index:20;
+}
+
+.corner-menu-button{
+    width:56px;
+    height:56px;
+    border:0;
+    border-radius:18px;
+    background:linear-gradient(135deg,#0a2f6b,#0b5ed7);
+    color:white;
+    font-size:26px;
+    cursor:pointer;
+    box-shadow:0 12px 25px rgba(11, 94, 215, 0.35);
+    transition:transform .2s ease, box-shadow .2s ease;
+}
+
+.corner-menu-button:hover{
+    transform:translateY(-1px) scale(1.02);
+    box-shadow:0 14px 30px rgba(11, 94, 215, 0.45);
+}
+
+.corner-menu-panel{
+    display:none;
+    position:absolute;
+    left:0;
+    top:68px;
+    min-width:210px;
+    padding:8px;
+    background:rgba(255,255,255,0.98);
+    border:1px solid #dfeafc;
+    border-radius:16px;
+    box-shadow:0 12px 28px rgba(15, 38, 75, 0.18);
+    backdrop-filter:blur(8px);
+}
+
+.corner-menu-panel.open{
+    display:grid;
+    gap:6px;
+}
+
+.corner-menu-panel button{
+    border:1px solid #dfeafc;
+    border-radius:12px;
+    padding:12px 14px;
+    background:linear-gradient(135deg,#f5f9ff,#edf4ff);
+    color:#123b74;
+    text-align:left;
+    font-weight:700;
+    cursor:pointer;
+    transition:all .2s ease;
+    box-shadow:0 2px 8px rgba(17,59,116,.04);
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.corner-menu-panel button:hover,
+.corner-menu-panel button:active{
+    background:linear-gradient(135deg,#dfeeff,#d8e8ff);
+    border-color:#bfd8ff;
+    transform:translateX(2px);
+}
+
+.corner-menu-panel button.worker-menu-btn{
+    background:linear-gradient(135deg,#fff8ec,#feeed4);
+    border-color:#fedba5;
+    color:#b35300;
+}
+
+.corner-menu-panel button.worker-menu-btn:hover{
+    background:linear-gradient(135deg,#feeacc,#fddfae);
+}
+
+.container{
+    width:90%;
+    max-width:1200px;
+    margin:30px auto;
+}
+
+.home-page{
+    display:block;
+}
+
+.hero,
+.home-hero,
+.home-section,
+.about-panel,
+.panel,
+.reward-box,
+.contact-box{
+    background:linear-gradient(135deg,#ffffff,#eef5ff);
+    border:1px solid #dce7f5;
+    border-radius:18px;
+    box-shadow:0 5px 18px rgba(22,50,90,.08);
+}
+
+.home-hero{
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:26px;
+    padding:36px;
+    align-items:center;
+    margin-bottom:26px;
+}
+
+.home-copy{
+    padding:8px 0;
+}
+
+.eyebrow{
+    display:inline-block;
+    background:#e7f0ff;
+    color:#0d5bd7;
+    font-size:12px;
+    font-weight:700;
+    padding:8px 12px;
+    border-radius:999px;
+    margin-bottom:16px;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+}
+
+.official-signature{
+    font-size:14px;
+    font-weight:800;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#0d5bd7;
+    margin:10px 0 18px;
+}
+
+.hero h2,
+.home-copy h1,
+.home-section h2,
+.about-panel h3,
+.panel h2{
+    color:#082c63;
+}
+
+.home-copy h1{
+    font-size:42px;
+    line-height:1.08;
+    margin-bottom:14px;
+}
+
+.home-copy p{
+    color:#60708a;
+    line-height:1.8;
+    font-size:16px;
+}
+
+.home-copy .cards{
+    margin-top:18px;
+    margin-bottom:0;
+}
+
+.cta-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:22px;
+}
+
+.mini-stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:14px;
+    margin-top:24px;
+}
+
+.stat-box{
+    background:white;
+    border:1px solid #ebf0fb;
+    border-radius:12px;
+    padding:16px;
+}
+
+.stat-box strong{
+    display:block;
+    font-size:22px;
+    color:#0b5ed7;
+    margin-bottom:6px;
+}
+
+.stat-box span{
+    color:#5e6d82;
+    font-size:13px;
+}
+
+.hero-image-panel{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.image-card{
+    position:relative;
+    width:100%;
+    max-width:430px;
+    background:linear-gradient(135deg,#0b5ed7,#082c63);
+    border-radius:22px;
+    padding:14px;
+    box-shadow:0 20px 35px rgba(8,44,99,.25);
+}
+
+.image-card img{
+    width:100%;
+    border-radius:18px;
+    display:block;
+    min-height:300px;
+    object-fit:cover;
+}
+
+.floating-box{
+    position:absolute;
+    left:18px;
+    bottom:18px;
+    background:rgba(255,255,255,.94);
+    color:#0d2343;
+    border-radius:12px;
+    padding:12px 14px;
+    box-shadow:0 10px 20px rgba(0,0,0,.12);
+    font-weight:700;
+}
+
+.home-section{
+    padding:28px;
+    margin-bottom:26px;
+}
+
+.section-heading{
+    color:#082c63;
+    font-weight:800;
+    font-size:28px;
+    margin-bottom:18px;
+}
+
+.feature-grid,
+.experience-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.feature-card,
+.experience-card{
+    background:white;
+    border:1px solid #e5edf8;
+    border-radius:14px;
+    padding:22px;
+}
+
+.feature-card h3,
+.experience-card h3{
+    margin-top:8px;
+    margin-bottom:8px;
+    color:#0d2343;
+    font-size:20px;
+}
+
+.feature-card p,
+.experience-card p,
+.about-panel p,
+.about-panel li,
+.quick-link span{
+    color:#5e6d82;
+    line-height:1.7;
+}
+
+.icon-badge{
+    width:48px;
+    height:48px;
+    border-radius:12px;
+    background:#edf5ff;
+    display:grid;
+    place-items:center;
+    font-size:24px;
+}
+
+.split-section{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:22px;
+}
+
+.about-panel{
+    padding:24px;
+}
+
+.about-panel ul{
+    margin-top:12px;
+    padding-left:18px;
+}
+
+.quick-links{
+    display:grid;
+    gap:12px;
+    margin-top:18px;
+}
+
+.quick-link{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    background:#f2f7ff;
+    border:1px solid #dfeafc;
+    border-radius:12px;
+    padding:12px 14px;
+    cursor:pointer;
+    font-weight:700;
+    color:#123b74;
+    text-align:left;
+}
+
+.hero h2{
+    color:#082c63;
+    font-size:30px;
+    margin-bottom:10px;
+}
+
+.hero p{
+    color:#60708a;
+    line-height:1.6;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-bottom:30px;
+}
+
+.card{
+    background:white;
+    padding:22px;
+    border-radius:15px;
+    box-shadow:0 5px 18px rgba(22,50,90,.08);
+    border:1px solid #e4eaf2;
+}
+
+.card.clickable{
+    cursor:pointer;
+}
+
+.card.clickable:hover{
+    border-color:#0b5ed7;
+    transform:translateY(-2px);
+}
+
+.card h3{
+    font-size:30px;
+    color:#0b5ed7;
+}
+
+.card p{
+    color:#65748b;
+    margin-top:5px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:1fr 1.5fr;
+    gap:25px;
+}
+
+.panel{
+    background:white;
+    border-radius:16px;
+    padding:25px;
+    box-shadow:0 5px 18px rgba(22,50,90,.08);
+}
+
+.login-panel{
+    max-width:480px;
+    margin:0 auto;
+}
+
+.password-field{
+    display:flex;
+    gap:8px;
+    align-items:center;
+}
+
+.password-field input{
+    flex:1;
+}
+
+.password-toggle{
+    margin-top:0;
+    min-width:44px;
+    padding:12px;
+}
+
+.panel h2{
+    color:#082c63;
+    margin-bottom:20px;
+}
+
+label{
+    display:block;
+    margin:14px 0 7px;
+    font-weight:bold;
+    font-size:14px;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:12px;
+    border:1px solid #d5deeb;
+    border-radius:8px;
+    outline:none;
+    font-size:16px;
+}
+
+input:focus,select:focus,textarea:focus{
+    border-color:#0b5ed7;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+.btn{
+    margin-top:18px;
+    padding:12px 18px;
+    border:none;
+    border-radius:8px;
+    background:#0b5ed7;
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+    min-height:44px;
+}
+
+.btn:hover{
+    background:#084298;
+}
+
+.btn.secondary{
+    background:#eef4ff;
+    color:#0b5ed7;
+}
+
+.btn.danger{
+    background:#dc3545;
+    color:white;
+}
+
+.btn.danger:hover{
+    background:#b52b3a;
+}
+
+.complaint{
+    border:1px solid #e0e7f0;
+    border-radius:12px;
+    padding:18px;
+    margin-bottom:14px;
+    background:white;
+}
+
+.complaint-top{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+}
+
+.complaint h3{
+    color:#172033;
+}
+
+.complaint p{
+    color:#68778c;
+    margin-top:6px;
+}
+
+.complaint-photo{
+    display:block;
+    width:100%;
+    max-width:360px;
+    max-height:240px;
+    object-fit:cover;
+    border-radius:10px;
+    margin-top:14px;
+    border:1px solid #dce5f0;
+}
+
+.action-row{
+    margin-top:12px;
+    display:flex;
+    justify-content:flex-end;
+}
+
+.badge{
+    padding:6px 10px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+    white-space:nowrap;
+}
+
+.pending{
+    background:#fff3cd;
+    color:#856404;
+}
+
+.progress{
+    background:#cfe2ff;
+    color:#084298;
+}
+
+.resolved{
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.high{
+    color:#b02a37;
+    font-weight:bold;
+}
+
+.medium{
+    color:#997404;
+    font-weight:bold;
+}
+
+.low{
+    color:#146c43;
+    font-weight:bold;
+}
+
+.hidden{
+    display:none !important;
+}
+
+.search{
+    margin-bottom:18px;
+}
+
+.reward-box{
+    background:linear-gradient(135deg,#fff7df,#fffaf0);
+    border:1px solid #f0d98b;
+    border-radius:16px;
+    padding:24px;
+    margin:20px 0 30px;
+    box-shadow:0 5px 18px rgba(22,50,90,.08);
+}
+
+.reward-box h3{
+    color:#7a4b00;
+    margin-bottom:10px;
+}
+
+.reward-box p,
+.reward-box li{
+    color:#5f4a2d;
+    line-height:1.7;
+}
+
+.reward-box ul{
+    margin-top:12px;
+    padding-left:20px;
+}
+
+.contact-box{
+    background:linear-gradient(135deg,#edf4ff,#f4f8ff);
+    border:1px solid #bfd8ff;
+    border-radius:16px;
+    padding:24px;
+    margin:20px 0 30px;
+    box-shadow:0 5px 18px rgba(22,50,90,.08);
+}
+
+.contact-box h3{
+    color:#0c3d8f;
+    margin-bottom:12px;
+}
+
+.contact-box p{
+    color:#26415f;
+    line-height:1.8;
+    margin:4px 0;
+}
+
+/* WORKERS SECTION STYLES */
+.workers-banner{
+    background:linear-gradient(135deg,#072b61,#0d5bd7);
+    color:white;
+    padding:28px;
+    border-radius:18px;
+    margin-bottom:24px;
+    box-shadow:0 10px 25px rgba(11,94,215,0.22);
+}
+
+.workers-banner h2{
+    font-size:30px;
+    margin-bottom:8px;
+    color:white;
+}
+
+.workers-banner p{
+    color:#d0e2ff;
+    font-size:15px;
+    line-height:1.6;
+}
+
+.workers-category-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+    gap:18px;
+    margin-bottom:28px;
+}
+
+.worker-cat-card{
+    background:white;
+    border:2px solid #e1ebf8;
+    border-radius:16px;
+    padding:20px;
+    cursor:pointer;
+    transition:all .25s ease;
+    box-shadow:0 4px 15px rgba(15,38,75,0.05);
+    display:flex;
+    flex-direction:column;
+    justify-content:space-between;
+}
+
+.worker-cat-card:hover{
+    transform:translateY(-3px);
+    border-color:#0b5ed7;
+    box-shadow:0 8px 22px rgba(11,94,215,0.16);
+}
+
+.worker-cat-card.active{
+    border-color:#0b5ed7;
+    background:linear-gradient(135deg,#f0f6ff,#ffffff);
+    box-shadow:0 0 0 3px rgba(11,94,215,0.2);
+}
+
+.worker-cat-header{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin-bottom:12px;
+}
+
+.worker-cat-icon{
+    width:50px;
+    height:50px;
+    border-radius:14px;
+    background:#eaf2ff;
+    font-size:26px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+}
+
+.worker-cat-title h3{
+    color:#082c63;
+    font-size:18px;
+    margin-bottom:2px;
+}
+
+.worker-cat-title span{
+    font-size:12px;
+    color:#73849e;
+    font-weight:600;
+}
+
+.worker-cat-details{
+    margin:10px 0;
+    font-size:13px;
+    color:#4b5a6f;
+    line-height:1.6;
+}
+
+.worker-cat-details strong{
+    color:#0d2343;
+}
+
+.worker-cat-counts{
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px dashed #e2eaf5;
+}
+
+.worker-count-pill{
+    font-size:11px;
+    font-weight:700;
+    padding:4px 8px;
+    border-radius:20px;
+    background:#f0f4fa;
+    color:#4a5b73;
+}
+
+.worker-count-pill.total{
+    background:#e7f0ff;
+    color:#0b5ed7;
+}
+
+.worker-count-pill.pending{
+    background:#fff3cd;
+    color:#856404;
+}
+
+.worker-count-pill.resolved{
+    background:#d1e7dd;
+    color:#0f5132;
+}
+
+.category-filter-bar{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    overflow-x:auto;
+    padding-bottom:10px;
+    margin-bottom:20px;
+}
+
+.cat-filter-btn{
+    padding:10px 16px;
+    background:white;
+    border:1px solid #d5e1f0;
+    border-radius:30px;
+    font-size:14px;
+    font-weight:bold;
+    color:#364d6e;
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .2s ease;
+}
+
+.cat-filter-btn:hover{
+    background:#eef5ff;
+    border-color:#b5d1f8;
+    color:#0b5ed7;
+}
+
+.cat-filter-btn.active{
+    background:#0b5ed7;
+    color:white;
+    border-color:#0b5ed7;
+    box-shadow:0 4px 12px rgba(11,94,215,0.3);
+}
+
+.worker-task-card{
+    background:white;
+    border:1px solid #e1ebf8;
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 4px 14px rgba(22,50,90,0.06);
+    transition:transform .2s ease;
+}
+
+.worker-task-card:hover{
+    transform:translateY(-1px);
+    border-color:#c8dbf4;
+}
+
+.worker-task-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:10px;
+}
+
+.worker-task-id{
+    display:inline-block;
+    background:#e8f1ff;
+    color:#0b5ed7;
+    font-weight:800;
+    padding:3px 8px;
+    border-radius:6px;
+    font-size:12px;
+    margin-bottom:4px;
+}
+
+.worker-task-meta{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+    gap:8px 14px;
+    background:#f8faff;
+    border:1px solid #ebf2fb;
+    border-radius:10px;
+    padding:12px;
+    margin:12px 0;
+    font-size:13px;
+}
+
+.worker-task-actions{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:14px;
+    padding-top:12px;
+    border-top:1px solid #eef3f9;
+}
+
+.worker-status-select{
+    max-width:200px;
+    padding:8px 12px;
+    font-size:14px;
+    font-weight:bold;
+    border-radius:8px;
+}
+
+footer{
+    margin-top:50px;
+    background:#071d3d;
+    color:white;
+    padding:30px 6%;
+    text-align:center;
+}
+
+footer p{
+    margin:6px;
+    opacity:.8;
+}
+
+@media(max-width:850px){
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .grid{
+        grid-template-columns:1fr;
+    }
+
+    header{
+        flex-direction:column;
+        gap:15px;
+        text-align:center;
+    }
+
+    .logo{
+        justify-content:center;
+    }
+
+    nav{
+        width:100%;
+        justify-content:center;
+    }
+}
+
+@media(max-width:500px){
+    .container{
+        width:calc(100% - 24px);
+        margin:18px auto;
+    }
+
+    .corner-menu{
+        left:10px;
+        top:10px;
+    }
+
+    .corner-menu-button{
+        width:42px;
+        height:42px;
+        border-radius:12px;
+        font-size:20px;
+    }
+
+    .corner-menu-panel{
+        top:54px;
+        min-width:180px;
+    }
+
+    header{
+        padding:14px 12px;
+    }
+
+    .logo{
+        margin-left:52px;
+        margin-right:82px;
+        gap:8px;
+    }
+
+    .theme-corner-toggle{
+        right:10px;
+        top:10px;
+    }
+
+    .theme-segmented-switch{
+        padding:3px;
+    }
+
+    .theme-opt-btn{
+        padding:7px 10px;
+        font-size:12px;
+    }
+
+    .theme-opt-btn .theme-label{
+        display:none;
+    }
+
+    .logo-image{
+        width:46px;
+        height:46px;
+    }
+
+    .logo h1{
+        font-size:17px;
+    }
+
+    .logo p{
+        font-size:10px;
+    }
+
+    nav button{
+        flex:1;
+        min-height:44px;
+    }
+
+    .home-hero,
+    .split-section,
+    .feature-grid,
+    .experience-grid{
+        grid-template-columns:1fr;
+    }
+
+    .home-hero{
+        padding:18px;
+    }
+
+    .home-copy h1{
+        font-size:28px;
+    }
+
+    .mini-stats{
+        grid-template-columns:1fr;
+    }
+
+    .cards{
+        grid-template-columns:repeat(2,1fr);
+        gap:12px;
+    }
+
+    .hero{
+        padding:25px;
+    }
+
+    .hero h2{
+        font-size:24px;
+    }
+
+    .hero,
+    .panel,
+    .reward-box,
+    .contact-box,
+    .home-section,
+    .about-panel{
+        padding:18px;
+        border-radius:12px;
+    }
+
+    .complaint-top{
+        flex-direction:column;
+    }
+
+    .badge{
+        align-self:flex-start;
+    }
+
+    .complaint-photo{
+        max-width:100%;
+    }
+
+    .workers-banner{
+        padding:18px;
+    }
+
+    .workers-banner h2{
+        font-size:22px;
+    }
+
+    .workers-category-grid{
+        grid-template-columns:1fr;
+    }
+
+    .worker-task-actions{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .worker-status-select{
+        max-width:100%;
+    }
+}
+
+/* =========================================================
+   DARK MODE & RIGHT-SIDE CORNER THEME TOGGLE
+   ========================================================= */
+
+/* Theme Toggle Component in Right Corner */
+.theme-corner-toggle{
+    position:fixed;
+    right:18px;
+    top:18px;
+    z-index:25;
+}
+
+.theme-segmented-switch{
+    display:flex;
+    align-items:center;
+    background:rgba(255,255,255,0.95);
+    border:1px solid #dfeafc;
+    border-radius:999px;
+    padding:4px;
+    box-shadow:0 8px 24px rgba(11,44,99,0.18);
+    backdrop-filter:blur(8px);
+    -webkit-backdrop-filter:blur(8px);
+    transition:all .25s ease;
+}
+
+.theme-opt-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    border:0;
+    background:transparent;
+    color:#4a5b73;
+    font-size:13px;
+    font-weight:700;
+    padding:8px 14px;
+    border-radius:999px;
+    cursor:pointer;
+    transition:all .2s ease;
+    user-select:none;
+}
+
+.theme-opt-btn:hover{
+    color:#0b5ed7;
+}
+
+.theme-opt-btn.active{
+    background:linear-gradient(135deg,#082c63,#0b5ed7);
+    color:white;
+    box-shadow:0 3px 10px rgba(11,94,215,0.35);
+}
+
+/* Dark Mode Overrides */
+html.dark-mode body,
+body.dark-mode{
+    background:#0d131f;
+    color:#e2e8f0;
+}
+
+body.dark-mode header{
+    background:linear-gradient(135deg,#06152b,#0b336f);
+    box-shadow:0 4px 20px rgba(0,0,0,0.5);
+    border-bottom:1px solid rgba(255,255,255,0.06);
+}
+
+body.dark-mode .logo h1{
+    color:#ffffff;
+}
+
+body.dark-mode .corner-menu-button{
+    background:linear-gradient(135deg,#0d254c,#134c9e);
+    box-shadow:0 10px 25px rgba(0,0,0,0.45);
+}
+
+body.dark-mode .corner-menu-panel{
+    background:rgba(18,26,43,0.96);
+    border-color:#223554;
+    box-shadow:0 16px 36px rgba(0,0,0,0.55);
+}
+
+body.dark-mode .corner-menu-panel button{
+    background:linear-gradient(135deg,#18253c,#131e32);
+    border-color:#243754;
+    color:#cbd5e1;
+    box-shadow:none;
+}
+
+body.dark-mode .corner-menu-panel button:hover,
+body.dark-mode .corner-menu-panel button:active{
+    background:linear-gradient(135deg,#203352,#1a2b45);
+    border-color:#3b82f6;
+    color:#60a5fa;
+}
+
+body.dark-mode .corner-menu-panel button.worker-menu-btn{
+    background:linear-gradient(135deg,#2c1c0a,#221607);
+    border-color:#5c3a12;
+    color:#fbbf24;
+}
+
+body.dark-mode .corner-menu-panel button.worker-menu-btn:hover{
+    background:linear-gradient(135deg,#3d260c,#2e1c08);
+}
+
+body.dark-mode .theme-segmented-switch{
+    background:rgba(18,26,43,0.96);
+    border-color:#243754;
+    box-shadow:0 8px 26px rgba(0,0,0,0.45);
+}
+
+body.dark-mode .theme-opt-btn{
+    color:#94a3b8;
+}
+
+body.dark-mode .theme-opt-btn:hover{
+    color:#60a5fa;
+}
+
+body.dark-mode .theme-opt-btn.active{
+    background:linear-gradient(135deg,#1d4ed8,#3b82f6);
+    color:white;
+    box-shadow:0 3px 12px rgba(59,130,246,0.4);
+}
+
+body.dark-mode .hero,
+body.dark-mode .home-hero,
+body.dark-mode .home-section,
+body.dark-mode .about-panel,
+body.dark-mode .panel,
+body.dark-mode .card,
+body.dark-mode .feature-card,
+body.dark-mode .experience-card{
+    background:linear-gradient(135deg,#141f33,#111a2c);
+    border-color:#20304a;
+    box-shadow:0 6px 20px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .hero h2,
+body.dark-mode .home-copy h1,
+body.dark-mode .home-section h2,
+body.dark-mode .about-panel h3,
+body.dark-mode .panel h2,
+body.dark-mode .section-heading,
+body.dark-mode .feature-card h3,
+body.dark-mode .experience-card h3{
+    color:#f1f5f9;
+}
+
+body.dark-mode .home-copy p,
+body.dark-mode .hero p,
+body.dark-mode .feature-card p,
+body.dark-mode .experience-card p,
+body.dark-mode .about-panel p,
+body.dark-mode .about-panel li,
+body.dark-mode .card p{
+    color:#94a3b8;
+}
+
+body.dark-mode .eyebrow{
+    background:#172742;
+    color:#60a5fa;
+    border:1px solid #233c66;
+}
+
+body.dark-mode .official-signature{
+    color:#60a5fa;
+}
+
+body.dark-mode .stat-box{
+    background:#162238;
+    border-color:#223554;
+}
+
+body.dark-mode .stat-box strong{
+    color:#60a5fa;
+}
+
+body.dark-mode .stat-box span{
+    color:#94a3b8;
+}
+
+body.dark-mode .icon-badge{
+    background:#1a2842;
+    color:#60a5fa;
+}
+
+body.dark-mode .floating-box{
+    background:rgba(18,26,43,0.95);
+    color:#f1f5f9;
+    border:1px solid #243754;
+    box-shadow:0 10px 24px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .quick-link{
+    background:#142036;
+    border-color:#223554;
+    color:#93c5fd;
+}
+
+body.dark-mode .quick-link:hover{
+    background:#1c2d4a;
+    border-color:#3b82f6;
+}
+
+body.dark-mode .card{
+    background:#141f33;
+    border-color:#20304a;
+}
+
+body.dark-mode .card h3{
+    color:#60a5fa;
+}
+
+body.dark-mode label{
+    color:#cbd5e1;
+}
+
+body.dark-mode input,
+body.dark-mode select,
+body.dark-mode textarea{
+    background:#0f172a;
+    border-color:#243754;
+    color:#f1f5f9;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus{
+    border-color:#3b82f6;
+    box-shadow:0 0 0 3px rgba(59,130,246,0.25);
+}
+
+body.dark-mode input::placeholder,
+body.dark-mode textarea::placeholder{
+    color:#64748b;
+}
+
+body.dark-mode .btn.secondary{
+    background:#1a2842;
+    color:#93c5fd;
+    border:1px solid #243754;
+}
+
+body.dark-mode .btn.secondary:hover{
+    background:#233759;
+}
+
+body.dark-mode .complaint{
+    background:#141f33;
+    border-color:#20304a;
+}
+
+body.dark-mode .complaint h3{
+    color:#f1f5f9;
+}
+
+body.dark-mode .complaint p{
+    color:#94a3b8;
+}
+
+body.dark-mode .complaint-photo{
+    border-color:#243754;
+}
+
+body.dark-mode .reward-box{
+    background:linear-gradient(135deg,#231c0b,#1b1507);
+    border-color:#5c4515;
+}
+
+body.dark-mode .reward-box h3{
+    color:#fbbf24;
+}
+
+body.dark-mode .reward-box p,
+body.dark-mode .reward-box li{
+    color:#fde68a;
+}
+
+body.dark-mode .contact-box{
+    background:linear-gradient(135deg,#0f2038,#0c1a2f);
+    border-color:#1e3a66;
+}
+
+body.dark-mode .contact-box h3{
+    color:#93c5fd;
+}
+
+body.dark-mode .contact-box p{
+    color:#cbd5e1;
+}
+
+body.dark-mode .workers-banner{
+    background:linear-gradient(135deg,#071a36,#0d3878);
+    border:1px solid #1e3a66;
+}
+
+body.dark-mode .worker-cat-card{
+    background:#141f33;
+    border-color:#20304a;
+}
+
+body.dark-mode .worker-cat-card:hover{
+    border-color:#3b82f6;
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+}
+
+body.dark-mode .worker-cat-card.active{
+    background:linear-gradient(135deg,#172640,#131e33);
+    border-color:#3b82f6;
+    box-shadow:0 0 0 3px rgba(59,130,246,0.3);
+}
+
+body.dark-mode .worker-cat-icon{
+    background:#1a2842;
+}
+
+body.dark-mode .worker-cat-title h3{
+    color:#f1f5f9;
+}
+
+body.dark-mode .worker-cat-title span{
+    color:#94a3b8;
+}
+
+body.dark-mode .worker-cat-details{
+    color:#cbd5e1;
+}
+
+body.dark-mode .worker-cat-details strong{
+    color:#f1f5f9;
+}
+
+body.dark-mode .worker-cat-counts{
+    border-top-color:#20304a;
+}
+
+body.dark-mode .worker-count-pill{
+    background:#1e293b;
+    color:#cbd5e1;
+}
+
+body.dark-mode .worker-count-pill.total{
+    background:#162a4d;
+    color:#60a5fa;
+}
+
+body.dark-mode .worker-count-pill.pending{
+    background:#382606;
+    color:#fcd34d;
+}
+
+body.dark-mode .worker-count-pill.resolved{
+    background:#07331d;
+    color:#86efac;
+}
+
+body.dark-mode .cat-filter-btn{
+    background:#141f33;
+    border-color:#223554;
+    color:#cbd5e1;
+}
+
+body.dark-mode .cat-filter-btn:hover{
+    background:#1b2a45;
+    color:#93c5fd;
+    border-color:#33507d;
+}
+
+body.dark-mode .cat-filter-btn.active{
+    background:#2563eb;
+    color:white;
+    border-color:#2563eb;
+}
+
+body.dark-mode .worker-task-card{
+    background:#141f33;
+    border-color:#20304a;
+}
+
+body.dark-mode .worker-task-id{
+    background:#172b4d;
+    color:#60a5fa;
+}
+
+body.dark-mode .worker-task-meta{
+    background:#0f1728;
+    border-color:#1e2d45;
+    color:#cbd5e1;
+}
+
+body.dark-mode .worker-task-actions{
+    border-top-color:#20304a;
+}
+
+body.dark-mode .worker-status-select{
+    background:#0f172a;
+    border-color:#243754;
+    color:#f1f5f9;
+}
+
+body.dark-mode footer{
+    background:#080d17;
+    border-top:1px solid #162238;
+}
+
+body.dark-mode [style*="color:#082c63"],
+body.dark-mode [style*="color: #082c63"]{
+    color:#93c5fd !important;
+}
+
+body.dark-mode [style*="color:#66758a"],
+body.dark-mode [style*="color: #66758a"],
+body.dark-mode [style*="color:#68778c"],
+body.dark-mode [style*="color:#60708a"],
+body.dark-mode [style*="color:#4a5b73"]{
+    color:#94a3b8 !important;
+}
+
+body.dark-mode [style*="background:#fbfdff"],
+body.dark-mode [style*="background: #fbfdff"]{
+    background:#0f1827 !important;
+    border-color:#20304a !important;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+
+<div class="logo">
+    <a href="https://www.indraganesan.org/" target="_blank" rel="noopener noreferrer" title="Tap to open official website; long press to open logo image" oncontextmenu="window.open('kommodo_logo.png','_blank'); return false;">
+        <img class="logo-image" src="https://plain-apac-prod-public.komododecks.com/202609/04/FhemyUXXY0Z9dCjG0Lr7/image.png" width="68" height="68" loading="eager" decoding="async" alt="IG Campus logo" onerror="this.onerror=function(){this.onerror=null;this.src='igi_logo.png';};this.src='https://www.indraganesan.org/assets/images/logos/igi_logo.png';">
+    </a>
+    <div>
+        <h1>IG Campus</h1>
+        <p>Indra Ganesan College of Engineering</p>
+    </div>
+</div>
+
+</header>
+
+<div class="corner-menu">
+    <button class="corner-menu-button" type="button" onclick="toggleCornerMenu()" aria-label="Open menu" title="Open menu">☰</button>
+    <div id="cornerMenuPanel" class="corner-menu-panel">
+        <button type="button" onclick="cornerMenuAction('home')">🏠 Home</button>
+        <button type="button" onclick="cornerMenuAction('student')">📝 Student</button>
+        <button type="button" onclick="cornerMenuAction('admin')">👨‍💼 Admin</button>
+        <button type="button" class="worker-menu-btn" onclick="cornerMenuAction('workers')">👷 Workers</button>
+        <button type="button" onclick="cornerMenuAction('complaints')">📊 Total Complaints</button>
+        <button type="button" onclick="cornerMenuAction('contact')">🏫 Contact Details</button>
+    </div>
+</div>
+
+<!-- RIGHT-SIDE CORNER THEME TOGGLE (LIGHT & DARK MODE) -->
+<div class="theme-corner-toggle" id="themeCornerToggle" role="region" aria-label="Theme Mode Selection">
+    <div class="theme-segmented-switch">
+        <button type="button" class="theme-opt-btn active" id="themeLightBtn" onclick="setAppTheme('light')" aria-pressed="true" title="Switch to Light Mode">
+            <span class="theme-icon">☀️</span>
+            <span class="theme-label">Light</span>
+        </button>
+        <button type="button" class="theme-opt-btn" id="themeDarkBtn" onclick="setAppTheme('dark')" aria-pressed="false" title="Switch to Dark Mode">
+            <span class="theme-icon">🌙</span>
+            <span class="theme-label">Dark</span>
+        </button>
+    </div>
+</div>
+
+
+<div class="container">
+
+<section id="homePage" class="home-page">
+    <div class="home-hero">
+        <div class="home-copy">
+            <span class="eyebrow">Campus Support System</span>
+            <h1>IG Campus Complaint &amp; Maintenance</h1>
+            <p>
+                Report campus problems quickly, track maintenance requests,
+                and help create a cleaner and better campus experience.
+            </p>
+            <div class="cta-row">
+                <button class="btn" type="button" onclick="showSection('student')">Submit Complaint</button>
+                <button class="btn secondary" type="button" onclick="showSection('workers')">👷 Workers Portal</button>
+                <button class="btn secondary" type="button" onclick="showSection('admin')">Admin Portal</button>
+            </div>
+
+            <div id="dashboardCards" class="cards" style="margin-top:20px; margin-bottom:0;">
+                <div class="card clickable" onclick="showAllComplaints()" title="Open all complaints">
+                    <h3 id="total">0</h3>
+                    <p>Total Complaints</p>
+                </div>
+
+                <div class="card clickable" onclick="showPendingComplaints()" title="Open pending complaints">
+                    <h3 id="pending">0</h3>
+                    <p>Pending</p>
+                </div>
+
+                <div class="card clickable" onclick="showInProgressComplaints()" title="Open in progress complaints">
+                    <h3 id="progress">0</h3>
+                    <p>In Progress</p>
+                </div>
+
+                <div class="card clickable" onclick="showResolvedComplaints()" title="Open resolved complaints">
+                    <h3 id="resolved">0</h3>
+                    <p>Resolved</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="hero-image-panel">
+            <div class="image-card">
+                <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=900&q=80" alt="Campus life" onerror="this.onerror=null;this.src='igi_logo.png';">
+                <div class="floating-box">Campus Support • Student First</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="rewardBox" class="reward-box">
+        <h3>🎁 Campus Fix Reward Program</h3>
+        <p>
+            Students who report valid campus issues and support maintenance improvements can receive
+            recognition rewards such as appreciation certificates, bonus points, and leadership recognition.
+        </p>
+        <ul>
+            <li>Fast issue reporting helps improve campus safety and comfort.</li>
+            <li>Valid complaints may earn campus appreciation and special recognition.</li>
+            <li>Active participation supports a cleaner, smarter, and more efficient campus.</li>
+        </ul>
+    </div>
+
+    <div class="reward-box">
+        <h3>🏆 This Month's Campus Fix Winner</h3>
+        <p><strong>Winner:</strong> Sathish (CSE)</p>
+    </div>
+</section>
+
+<!-- WORKERS SECTION -->
+<section id="workers" class="hidden">
+    <div class="workers-banner" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+        <div>
+            <h2>👷 Campus Workers &amp; Maintenance Categories</h2>
+            <p>
+                Browse all campus maintenance worker categories below. Click any category to view its assigned staff,
+                duty overview, and all registered complaints ready to be serviced.
+            </p>
+            <div id="workerLoggedInBadge" style="display:none; margin-top:10px; padding:6px 14px; background:rgba(255,255,255,0.22); border-radius:20px; font-size:13px; color:#fff;"></div>
+        </div>
+        <button class="btn secondary" type="button" onclick="workerLogout()" style="margin-top:0; white-space:nowrap; background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.4);">
+            🚪 Worker Logout
+        </button>
+    </div>
+
+    <h2 style="color:#082c63; margin-bottom:14px; font-size:22px;">🗂️ Maintenance Categories</h2>
+    <div id="workersCategoryList" class="workers-category-grid">
+        <!-- Rendered dynamically by JavaScript -->
+    </div>
+
+    <div class="panel" style="margin-top:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:16px;">
+            <div>
+                <h2 id="workerCategoryTitle" style="margin-bottom:4px;">All Category Tasks</h2>
+                <p id="workerCategorySubtitle" style="color:#66758a; font-size:14px;">Showing all maintenance requests across campus</p>
+            </div>
+            <button class="btn secondary" type="button" onclick="selectWorkerCategory('All')" style="margin-top:0;">Show All Categories</button>
+        </div>
+
+        <div class="category-filter-bar" id="categoryFilterBar">
+            <!-- Rendered dynamically by JavaScript -->
+        </div>
+
+        <input
+            class="search"
+            id="workerSearch"
+            placeholder="Search within this category by ID, title, floor, place..."
+            onkeyup="displayWorkerComplaints()"
+        >
+
+        <div id="workerComplaintsList">
+            <!-- Complaints rendered dynamically -->
+        </div>
+    </div>
+</section>
+
+<!-- WORKER LOGIN -->
+<section id="workersLogin" class="hidden">
+    <div class="panel login-panel">
+        <h2>👷 Worker Portal Login</h2>
+        <p style="color:#66758a;margin-bottom:20px;">
+            Authorized campus maintenance staff only. Enter your worker username (staff name, department, or ID) and password to open the workers page.
+        </p>
+
+        <form id="workersLoginForm">
+            <label for="workerUsername">Worker Username</label>
+            <input type="text" id="workerUsername" autocomplete="username" placeholder="Enter worker username" required>
+
+            <label for="workerPassword">Worker Password</label>
+            <div class="password-field">
+                <input type="password" id="workerPassword" autocomplete="current-password" placeholder="Enter worker password" required>
+                <button class="btn secondary password-toggle worker-pwd-toggle" type="button" onclick="toggleWorkerPassword()" aria-label="Show password" title="Show password">👁</button>
+            </div>
+
+            <button class="btn" type="submit" style="background:#fd7e14;">Login to Workers</button>
+        </form>
+    </div>
+</section>
+
+<!-- STUDENT -->
+
+<section id="student" class="hidden">
+
+<div class="grid">
+
+<div class="panel">
+
+<h2>📝 Report a Problem</h2>
+
+<form id="complaintForm">
+
+<label>Student Name</label>
+<input type="text" id="studentName" placeholder="Enter your name" required>
+
+<label>Register Number (12 digits)</label>
+<input type="text" id="regNo" placeholder="Enter 12-digit register number" inputmode="numeric" pattern="[0-9]{12}" minlength="12" maxlength="12" required>
+
+<label>Complaint Title</label>
+<input type="text" id="title" placeholder="Example: Projector not working" required>
+
+<label>Floor</label>
+
+<select id="floor" required>
+
+<option value="Ground Floor" selected>Ground Floor</option>
+<option>Floor 1</option>
+<option>Floor 2</option>
+<option>Floor 3</option>
+<option>Floor 4</option>
+<option>Floor 5</option>
+
+</select>
+
+
+<label>Place</label>
+
+<select id="place" required>
+
+<option value="">Select Place</option>
+
+</select>
+
+
+<label>Category</label>
+
+<select id="category" required>
+
+<option value="">Select Category</option>
+<option>Electrical</option>
+<option>Network / Wi-Fi</option>
+<option>Classroom</option>
+<option>Cleaning</option>
+<option>Plumbing</option>
+<option>Laboratory</option>
+<option>Other</option>
+
+</select>
+
+
+<label>Priority</label>
+
+<select id="priority">
+
+<option>Low</option>
+<option selected>Medium</option>
+<option>High</option>
+
+</select>
+
+<label>Time</label>
+<input type="time" id="time" required>
+
+<label>Description</label>
+
+<textarea id="description"
+placeholder="Describe the problem..."
+required></textarea>
+
+
+<label>Upload Photo</label>
+
+<input type="file" id="photo" accept="image/*">
+
+
+<button class="btn" type="submit">
+Submit Complaint
+</button>
+
+</form>
+
+</div>
+
+
+<div class="panel">
+
+<h2>📋 Recent Complaints</h2>
+
+<button class="btn secondary" type="button" onclick="showAllComplaints()">
+Show All Complaints
+</button>
+
+<input
+class="search"
+id="search"
+placeholder="Search complaint ID, title, location..."
+onkeyup="displayComplaints()"
+>
+
+<div id="complaints"></div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- ADMIN -->
+
+<section id="admin" class="hidden">
+
+<div class="panel">
+
+<h2>👨‍💼 Admin Dashboard</h2>
+
+<button class="btn secondary" type="button" onclick="adminLogout()">Logout</button>
+
+<p style="color:#66758a;margin-bottom:20px;">
+Maintenance management system — IGCE
+</p>
+
+<input
+class="search"
+id="adminSearch"
+placeholder="Search complaint ID, title, location..."
+onkeyup="displayAdmin()"
+>
+
+<div id="adminComplaints"></div>
+
+</div>
+
+</section>
+
+<section id="adminLogin" class="hidden">
+
+<div class="panel login-panel">
+
+<h2>🔐 Admin Login</h2>
+
+<p style="color:#66758a;margin-bottom:20px;">
+Use one of the two authorized admin names and its matching password.
+</p>
+
+<form id="adminLoginForm">
+
+<label for="adminUsername">Admin Username</label>
+<input type="text" id="adminUsername" autocomplete="username" required>
+
+<label for="adminPassword">Admin Password</label>
+<div class="password-field">
+    <input type="password" id="adminPassword" autocomplete="current-password" required>
+    <button class="btn secondary password-toggle" type="button" onclick="toggleAdminPassword()" aria-label="Show password" title="Show password">👁</button>
+</div>
+
+<button class="btn" type="submit">Login to Admin</button>
+
+</form>
+
+</div>
+
+</section>
+
+<div id="contactDetails" class="contact-box">
+    <h3>🏫 College Contact Details</h3>
+    <p><strong>College:</strong> Indra Ganesan College of Engineering</p>
+    <p><strong>Address:</strong> Manikandam, Tiruchirappalli – 620012, Tamil Nadu</p>
+    <p><strong>Principal:</strong> Dr. G. Balakrishnan</p>
+    <p><strong>Vice Principal:</strong> N. Vaijeyanthi</p>
+    <p><strong>CSE Department HOD:</strong> T. Sugashini</p>
+    <p><strong>Phone:</strong> +91 431 290 0000</p>
+    <p><strong>WhatsApp:</strong> <a href="https://wa.me/919597415268" target="_blank" rel="noopener noreferrer">9597415268</a></p>
+    <p><strong>Instagram:</strong> <a href="https://www.instagram.com/igce_cse?igsi=MThxcjAzeDhiZGppcg==" target="_blank" rel="noopener noreferrer">IGCE CSE</a></p>
+    <p><strong>Email:</strong> info@igce.in</p>
+    <p><strong>Website:</strong> www.igce.in</p>
+</div>
+
+</div>
+
+
+<footer>
+
+<h3>IG Campus</h3>
+
+<p>IG Campus Complaint & Maintenance Management System</p>
+
+<p style="margin-top:15px;">
+Engineering Day Project • CSE Department
+</p>
+
+<p>Web Creator: Santhosh (CSE)</p>
+
+</footer>
+
+
+<script>
+
+let complaints = [];
+let demoDataChecked = false;
+let selectedWorkerCategory = "All";
+
+let adminAuthenticated = false;
+let workerAuthenticated = false;
+let currentLoggedInWorker = null;
+
+/* Authorized Worker Accounts */
+const authorizedWorkers = [
+    {
+        name: "Mr. K. Murugan",
+        role: "Chief Electrician",
+        category: "Electrical",
+        usernames: ["K MURUGAN", "MURUGAN", "ELECTRICAL"],
+        password: "MURUGAN@01"
+    },
+    {
+        name: "Mr. P. Vijay",
+        role: "Network & IT Support",
+        category: "Network / Wi-Fi",
+        usernames: ["P VIJAY", "VIJAY", "NETWORK", "WIFI"],
+        password: "VIJAY@02"
+    },
+    {
+        name: "Mr. R. Suresh",
+        role: "Campus Plumber",
+        category: "Plumbing",
+        usernames: ["R SURESH", "SURESH", "PLUMBING"],
+        password: "SURESH@03"
+    },
+    {
+        name: "Mrs. M. Selvam",
+        role: "Housekeeping Supervisor",
+        category: "Cleaning",
+        usernames: ["M SELVAM", "SELVAM", "CLEANING"],
+        password: "SELVAM@04"
+    },
+    {
+        name: "Mr. S. Mani",
+        role: "Campus Carpenter & Infrastructure",
+        category: "Classroom",
+        usernames: ["S MANI", "MANI", "CLASSROOM"],
+        password: "MANI@05"
+    },
+    {
+        name: "Mr. A. Ramesh",
+        role: "Lab Technician & Coordinator",
+        category: "Laboratory",
+        usernames: ["A RAMESH", "RAMESH", "LABORATORY", "LAB"],
+        password: "RAMESH@06"
+    },
+    {
+        name: "Mr. G. Karuppusamy",
+        role: "General Maintenance In-Charge",
+        category: "Other",
+        usernames: ["G KARUPPUSAMY", "KARUPPUSAMY", "OTHER", "MAINTENANCE"],
+        password: "KARUPPUSAMY@07"
+    },
+    {
+        name: "Campus Maintenance Supervisor",
+        role: "Maintenance Supervisor",
+        category: "All",
+        usernames: ["IGWORKERS26", "WORKER", "SUPERVISOR", "ALL"],
+        password: "ADMIN@123"
+    }
+];
+
+function findAuthorizedWorker(inputUser, inputPass){
+    if(!inputUser || !inputPass) return null;
+    const cleanUser = inputUser.trim().toUpperCase()
+        .replace(/^(MR|MRS|MS)\.?\s+/i, "")
+        .replace(/\./g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    return authorizedWorkers.find(worker => {
+        if(worker.password !== inputPass.trim()) return false;
+        return worker.usernames.some(u => {
+            const cleanU = u.toUpperCase().replace(/\./g, "").replace(/\s+/g, " ").trim();
+            return cleanU === cleanUser;
+        });
+    });
+}
+
+/* Worker Categories Definition */
+const workerCategories = [
+    {
+        name: "Electrical",
+        icon: "⚡",
+        lead: "Mr. K. Murugan",
+        role: "Chief Electrician",
+        phone: "+91 9597415268",
+        desc: "Fans, lights, switches, power sockets, MCB, wiring & projector power"
+    },
+    {
+        name: "Network / Wi-Fi",
+        icon: "📶",
+        lead: "Mr. P. Vijay",
+        role: "Network & IT Support",
+        phone: "+91 9597415268",
+        desc: "Campus Wi-Fi, LAN cables, routers, switches, internet connectivity"
+    },
+    {
+        name: "Plumbing",
+        icon: "🚰",
+        lead: "Mr. R. Suresh",
+        role: "Campus Plumber",
+        phone: "+91 9597415268",
+        desc: "Water taps, pipelines, drinking water supply, restroom plumbing, leaks"
+    },
+    {
+        name: "Cleaning",
+        icon: "🧹",
+        lead: "Mrs. M. Selvam",
+        role: "Housekeeping Supervisor",
+        phone: "+91 9597415268",
+        desc: "Restrooms, classrooms, corridor sweep, garbage bins & hygiene"
+    },
+    {
+        name: "Classroom",
+        icon: "🏫",
+        lead: "Mr. S. Mani",
+        role: "Campus Carpenter & Infrastructure",
+        phone: "+91 9597415268",
+        desc: "Desks, benches, doors, blackboards, window glass, furniture fixes"
+    },
+    {
+        name: "Laboratory",
+        icon: "🔬",
+        lead: "Mr. A. Ramesh",
+        role: "Lab Technician & Coordinator",
+        phone: "+91 9597415268",
+        desc: "Computer systems, lab apparatus, projectors, display cables, instruments"
+    },
+    {
+        name: "Other",
+        icon: "🛠️",
+        lead: "Mr. G. Karuppusamy",
+        role: "General Maintenance In-Charge",
+        phone: "+91 9597415268",
+        desc: "Civil repairs, masonry, painting, sign boards and general maintenance"
+    }
+];
+
+/* Live listener: fires on first load AND whenever ANYONE
+   anywhere submits/updates/deletes a complaint. */
+complaintsRef.on("value", function(snapshot){
+
+const data = snapshot.val();
+
+complaints = Array.isArray(data)
+? data.map(complaint => ({
+    ...complaint,
+    place: complaint.place || "",
+    floor: complaint.floor || complaint.block || ""
+}))
+: [];
+
+/* DEMO DATA (only inserted once, the very first time the
+   database is empty) */
+if(complaints.length === 0 && !demoDataChecked){
+
+demoDataChecked = true;
+
+complaints = [
+
+{
+id:1001,
+name:"Demo Student",
+reg:"CSE001",
+title:"Projector not working",
+location:"CSE Block",
+place:"Board Room",
+floor:"Floor 1",
+category:"Laboratory",
+priority:"High",
+description:"Projector in Room 204 is not displaying.",
+status:"In Progress",
+date:new Date().toLocaleString()
+},
+
+{
+id:1002,
+name:"Demo Student",
+reg:"CSE002",
+title:"Wi-Fi connection problem",
+location:"Library",
+place:"IGIRD Lab",
+floor:"Floor 2",
+category:"Network / Wi-Fi",
+priority:"Medium",
+description:"Wi-Fi is slow inside the library.",
+status:"Pending",
+date:new Date().toLocaleString()
+}
+
+];
+
+save();
+
+}
+
+updateStats();
+displayComplaints();
+
+if(!document.getElementById("admin").classList.contains("hidden")){
+displayAdmin();
+}
+
+if(!document.getElementById("workers").classList.contains("hidden")){
+displayWorkerCategories();
+displayWorkerComplaints();
+}
+
+});
+
+
+/* FORM */
+
+const placesByFloor = {
+"Ground Floor":[
+    "Board Room",
+    "Principal Room",
+    "Vice Principal Room",
+    "IGIRD Lab"
+],
+"Floor 1":[
+    "Auditorium",
+    "ECE Lab",
+    "ECE Department Room",
+    "Boys Restroom",
+    "Girls Restroom",
+    "Water Drinking Place",
+    "AX 201",
+    "AX 202",
+    "AX 203",
+    "AX 204",
+    "Staff Room",
+    "IT Department"
+],
+"Floor 2":[
+    "Library",
+    "CSE Department",
+    "CSE Lab",
+    "MECH Department",
+    "Counselling Room",
+    "Boys Restroom",
+    "Girls Restroom",
+    "Drinking Water Place",
+    "AGRI Department",
+    "AX 301",
+    "AX 302",
+    "AX 303",
+    "AX 304"
+],
+"Floor 3":[
+    "ECE Department",
+    "EEE Department",
+    "AI & DS Department",
+    "AX 401",
+    "AX 402",
+    "AX 403",
+    "AX 404",
+    "Exam Board",
+    "Drawing Hall 1",
+    "Drawing Hall 2",
+    "Data Analyst Lab"
+],
+"Floor 4":[
+    "Boys Restroom",
+    "Girls Restroom",
+    "Drinking Water Place",
+    "AX 501",
+    "AX 502",
+    "AX 503",
+    "AX 504"
+],
+"Floor 5":[
+    "Bio Medical Classes"
+]
+};
+
+function updatePlaceOptions(){
+
+const floor = document.getElementById("floor").value;
+const place = document.getElementById("place");
+
+place.innerHTML = "<option value=\"\">Select Place</option>";
+
+(placesByFloor[floor] || []).forEach(placeName => {
+    const option = document.createElement("option");
+    option.value = placeName;
+    option.textContent = placeName;
+    place.appendChild(option);
+});
+
+}
+
+document
+.getElementById("floor")
+.addEventListener("change", updatePlaceOptions);
+
+updatePlaceOptions();
+
+document
+.getElementById("complaintForm")
+.addEventListener("submit",async function(e){
+
+e.preventDefault();
+
+const regNo =
+document.getElementById("regNo").value.trim();
+
+if(!/^\d{12}$/.test(regNo)){
+
+alert("Register number must contain exactly 12 digits.");
+return;
+
+}
+
+const photoFile =
+document.getElementById("photo").files[0];
+
+const photo = photoFile
+? await preparePhoto(photoFile).catch(() => "")
+: "";
+
+const complaintTime = document.getElementById("time").value || new Date().toTimeString().slice(0,5);
+
+const complaint = {
+
+id:Date.now(),
+
+name:document.getElementById("studentName").value,
+
+reg:regNo,
+
+title:document.getElementById("title").value,
+
+location:"Not specified",
+
+place:document.getElementById("place").value,
+
+floor:document.getElementById("floor").value,
+
+category:document.getElementById("category").value,
+
+priority:document.getElementById("priority").value,
+
+time: complaintTime,
+
+description:document.getElementById("description").value,
+
+photo,
+
+status:"Pending",
+
+date:new Date().toLocaleString()
+
+};
+
+
+complaints.unshift(complaint);
+
+try{
+
+save();
+
+}catch(error){
+
+complaint.photo = "";
+save();
+
+alert("Complaint registered successfully, but the photo could not be saved on this device.");
+
+}
+
+this.reset();
+
+alert(
+"Your complaint registered successfully!\nThank you from IG CAMPUS.\nComplaint ID: #"
++ complaint.id
+);
+
+const whatsappMessage =
+"New IG CAMPUS complaint registered.\n"
++ "Complaint ID: #" + complaint.id + "\n"
++ "Student Name: " + complaint.name + "\n"
++ "Register Number: " + complaint.reg + "\n"
++ "Title: " + complaint.title + "\n"
++ "Location: " + complaint.location + "\n"
++ "Place: " + complaint.place + "\n"
++ "Floor: " + complaint.floor + "\n"
++ "Time: " + complaint.time + "\n"
++ "Status: Pending";
+
+window.location.href =
+"https://wa.me/919597415268?text=" + encodeURIComponent(whatsappMessage);
+
+displayComplaints();
+
+});
+
+function preparePhoto(file){
+
+return new Promise((resolve,reject)=>{
+
+const reader = new FileReader();
+
+reader.onload = () => {
+
+const image = new Image();
+
+image.onload = () => {
+
+const maxSize = 1200;
+const scale = Math.min(1,maxSize / Math.max(image.width,image.height));
+const canvas = document.createElement("canvas");
+
+canvas.width = Math.max(1,Math.round(image.width * scale));
+canvas.height = Math.max(1,Math.round(image.height * scale));
+
+canvas.getContext("2d").drawImage(image,0,0,canvas.width,canvas.height);
+
+resolve(canvas.toDataURL("image/jpeg",.72));
+
+};
+
+image.onerror = () => resolve(reader.result);
+image.src = reader.result;
+
+};
+reader.onerror = () => reject(reader.error);
+
+reader.readAsDataURL(file);
+
+});
+
+}
+
+
+function save(){
+
+complaintsRef.set(complaints);
+
+updateStats();
+
+}
+
+
+function updateStats(){
+
+document.getElementById("total").innerText =
+complaints.length;
+
+document.getElementById("pending").innerText =
+complaints.filter(x=>x.status==="Pending").length;
+
+document.getElementById("progress").innerText =
+complaints.filter(x=>x.status==="In Progress").length;
+
+document.getElementById("resolved").innerText =
+complaints.filter(x=>x.status==="Resolved").length;
+
+}
+
+
+/* STUDENT COMPLAINT LIST */
+
+let complaintStatusFilter = "";
+
+function displayComplaints(){
+
+const box =
+document.getElementById("complaints");
+
+const search =
+document.getElementById("search").value.toLowerCase().replace(/^#/,'');
+
+const filtered = complaints.filter(x => {
+
+const matchesSearch =
+x.id.toString().includes(search) ||
+x.title.toLowerCase().includes(search) ||
+x.location.toLowerCase().includes(search) ||
+(x.place || "").toLowerCase().includes(search) ||
+(x.floor || "").toLowerCase().includes(search) ||
+(x.category || "").toLowerCase().includes(search);
+
+const matchesStatus =
+!complaintStatusFilter || x.status === complaintStatusFilter;
+
+return matchesSearch && matchesStatus;
+
+});
+
+box.innerHTML="";
+
+if(filtered.length===0){
+
+box.innerHTML =
+"<p style='color:#777'>No complaints found.</p>";
+
+return;
+
+}
+
+
+filtered.forEach(c=>{
+
+let statusClass="pending";
+
+if(c.status==="In Progress")
+statusClass="progress";
+
+if(c.status==="Resolved")
+statusClass="resolved";
+
+
+box.innerHTML += `
+
+<div class="complaint">
+
+<div class="complaint-top">
+
+<div>
+
+<h3>${escapeHTML(c.title)}</h3>
+
+<p>
+📍 ${escapeHTML(c.location)} • ${escapeHTML(c.place || "Place not specified")} • ${escapeHTML(c.floor || "Floor not specified")}
+</p>
+
+</div>
+
+<span class="badge ${statusClass}">
+${c.status}
+</span>
+
+</div>
+
+<p>
+<strong>Complaint ID:</strong> #${c.id}
+</p>
+
+<p>
+<strong>Category:</strong> ${escapeHTML(c.category)}
+</p>
+
+<p>
+<strong>Priority:</strong>
+<span class="${c.priority.toLowerCase()}">
+${c.priority}
+</span>
+</p>
+
+<p>
+<strong>Time:</strong> ${escapeHTML(c.time || "Not specified")}
+</p>
+
+<p>${escapeHTML(c.description)}</p>
+
+${c.photo ? `<img class="complaint-photo" src="${escapeHTML(c.photo)}" alt="Uploaded complaint photo">` : ""}
+
+<p style="font-size:12px;margin-top:10px">
+Submitted: ${c.date}
+</p>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+function showResolvedComplaints(){
+
+showSection("student");
+
+complaintStatusFilter = "Resolved";
+
+displayComplaints();
+
+document
+.getElementById("complaints")
+.scrollIntoView({behavior:"smooth",block:"start"});
+
+}
+
+
+function showPendingComplaints(){
+
+showSection("student");
+
+complaintStatusFilter = "Pending";
+
+displayComplaints();
+
+document
+.getElementById("complaints")
+.scrollIntoView({behavior:"smooth",block:"start"});
+
+}
+
+
+function showInProgressComplaints(){
+
+showSection("student");
+
+complaintStatusFilter = "In Progress";
+
+displayComplaints();
+
+document
+.getElementById("complaints")
+.scrollIntoView({behavior:"smooth",block:"start"});
+
+}
+
+
+function showAllComplaints(){
+
+showSection("student");
+
+complaintStatusFilter = "";
+
+displayComplaints();
+
+document
+.getElementById("complaints")
+.scrollIntoView({behavior:"smooth",block:"start"});
+
+}
+
+
+/* WORKERS SECTION FUNCTIONS */
+
+function displayWorkerCategories(){
+    const container = document.getElementById("workersCategoryList");
+    const filterBar = document.getElementById("categoryFilterBar");
+    if(!container || !filterBar) return;
+
+    container.innerHTML = "";
+    filterBar.innerHTML = "";
+
+    // "All Categories" filter button
+    const allBtn = document.createElement("button");
+    allBtn.type = "button";
+    allBtn.className = "cat-filter-btn" + (selectedWorkerCategory === "All" ? " active" : "");
+    allBtn.textContent = "📋 All (" + complaints.length + ")";
+    allBtn.onclick = function(){ selectWorkerCategory("All"); };
+    filterBar.appendChild(allBtn);
+
+    workerCategories.forEach(cat => {
+        const catComplaints = complaints.filter(c => (c.category || "").toLowerCase() === cat.name.toLowerCase());
+        const totalCat = catComplaints.length;
+        const pendingCat = catComplaints.filter(c => c.status === "Pending").length;
+        const resolvedCat = catComplaints.filter(c => c.status === "Resolved").length;
+
+        // Card in category grid
+        const card = document.createElement("div");
+        card.className = "worker-cat-card" + (selectedWorkerCategory === cat.name ? " active" : "");
+        card.onclick = function(){ selectWorkerCategory(cat.name); };
+
+        card.innerHTML = `
+            <div>
+                <div class="worker-cat-header">
+                    <div class="worker-cat-icon">${cat.icon}</div>
+                    <div class="worker-cat-title">
+                        <h3>${cat.name}</h3>
+                        <span>${cat.role}</span>
+                    </div>
+                </div>
+                <div class="worker-cat-details">
+                    <p><strong>In-Charge:</strong> ${cat.lead}</p>
+                    <p><strong>Helpline:</strong> <a href="tel:${cat.phone}" style="color:#0b5ed7; text-decoration:none;">${cat.phone}</a></p>
+                    <p style="margin-top:6px; color:#60708a; font-size:12px;">${cat.desc}</p>
+                </div>
+            </div>
+            <div>
+                <div class="worker-cat-counts">
+                    <span class="worker-count-pill total">${totalCat} Total</span>
+                    <span class="worker-count-pill pending">${pendingCat} Pending</span>
+                    <span class="worker-count-pill resolved">${resolvedCat} Resolved</span>
+                </div>
+                <button class="btn secondary" style="width:100%; margin-top:10px; padding:8px 12px; font-size:13px;" type="button">
+                    View ${cat.name} Tasks ➔
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
+
+        // Filter bar button
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "cat-filter-btn" + (selectedWorkerCategory === cat.name ? " active" : "");
+        btn.innerHTML = `${cat.icon} ${cat.name} (${totalCat})`;
+        btn.onclick = function(){ selectWorkerCategory(cat.name); };
+        filterBar.appendChild(btn);
+    });
+}
+
+function selectWorkerCategory(catName){
+    selectedWorkerCategory = catName;
+
+    const titleElem = document.getElementById("workerCategoryTitle");
+    const subElem = document.getElementById("workerCategorySubtitle");
+
+    if(catName === "All"){
+        if(titleElem) titleElem.textContent = "All Category Tasks";
+        if(subElem) subElem.textContent = "Showing all maintenance requests across campus";
+    } else {
+        const catObj = workerCategories.find(c => c.name.toLowerCase() === catName.toLowerCase());
+        const icon = catObj ? catObj.icon + " " : "";
+        if(titleElem) titleElem.textContent = icon + catName + " Complaints & Tasks";
+        if(subElem) subElem.textContent = (catObj ? "Assigned Lead: " + catObj.lead + " (" + catObj.role + ") • " : "") + "Manage and update status";
+    }
+
+    displayWorkerCategories();
+    displayWorkerComplaints();
+
+    const title = document.getElementById("workerCategoryTitle");
+    if(title){
+        title.scrollIntoView({behavior:"smooth", block:"start"});
+    }
+}
+
+function displayWorkerComplaints(){
+    const box = document.getElementById("workerComplaintsList");
+    if(!box) return;
+
+    const searchInput = document.getElementById("workerSearch");
+    const search = searchInput ? searchInput.value.toLowerCase().replace(/^#/,'') : "";
+
+    const filtered = complaints.filter(c => {
+        const matchesCategory = (selectedWorkerCategory === "All") ||
+            ((c.category || "").toLowerCase() === selectedWorkerCategory.toLowerCase());
+
+        const matchesSearch =
+            c.id.toString().includes(search) ||
+            c.title.toLowerCase().includes(search) ||
+            c.location.toLowerCase().includes(search) ||
+            (c.place || "").toLowerCase().includes(search) ||
+            (c.floor || "").toLowerCase().includes(search) ||
+            (c.category || "").toLowerCase().includes(search) ||
+            (c.name || "").toLowerCase().includes(search);
+
+        return matchesCategory && matchesSearch;
+    });
+
+    box.innerHTML = "";
+
+    if(filtered.length === 0){
+        box.innerHTML = `
+            <div style="text-align:center; padding:35px 20px; background:#fbfdff; border:1px dashed #d5e3f5; border-radius:12px; margin-top:10px;">
+                <p style="font-size:32px; margin-bottom:8px;">✅</p>
+                <h3 style="color:#082c63; margin-bottom:6px;">No complaints in this category</h3>
+                <p style="color:#68778c; font-size:14px;">Great job! There are currently no unresolved or active complaints for ${escapeHTML(selectedWorkerCategory)}.</p>
+            </div>
+        `;
+        return;
+    }
+
+    filtered.forEach(c => {
+        let statusClass = "pending";
+        if(c.status === "In Progress") statusClass = "progress";
+        if(c.status === "Resolved") statusClass = "resolved";
+
+        const catIconObj = workerCategories.find(k => k.name.toLowerCase() === (c.category || "").toLowerCase());
+        const catIcon = catIconObj ? catIconObj.icon : "🛠️";
+
+        box.innerHTML += `
+            <div class="worker-task-card">
+                <div class="worker-task-header">
+                    <div>
+                        <span class="worker-task-id">#${c.id}</span>
+                        <h3 style="color:#082c63; font-size:18px; margin-top:2px;">${escapeHTML(c.title)}</h3>
+                    </div>
+                    <span class="badge ${statusClass}">${c.status}</span>
+                </div>
+
+                <div class="worker-task-meta">
+                    <div><strong>Category:</strong> ${catIcon} ${escapeHTML(c.category || "General")}</div>
+                    <div><strong>Priority:</strong> <span class="${(c.priority||'').toLowerCase()}">${escapeHTML(c.priority || 'Normal')}</span></div>
+                    <div><strong>Location:</strong> 📍 ${escapeHTML(c.place || "N/A")} (${escapeHTML(c.floor || "N/A")})</div>
+                    <div><strong>Student:</strong> ${escapeHTML(c.name || "Student")} (${escapeHTML(c.reg || "N/A")})</div>
+                    <div><strong>Reported Time:</strong> 🕒 ${escapeHTML(c.time || "N/A")}</div>
+                    <div><strong>Submitted Date:</strong> 📅 ${escapeHTML(c.date || "N/A")}</div>
+                </div>
+
+                <p style="color:#4a5b73; line-height:1.6; margin:8px 0; font-size:14px;">
+                    <strong>Issue Details:</strong> ${escapeHTML(c.description || "No description provided.")}
+                </p>
+
+                ${c.photo ? `<img class="complaint-photo" src="${escapeHTML(c.photo)}" alt="Uploaded complaint photo">` : ""}
+
+                <div class="worker-task-actions">
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <label style="margin:0; font-size:13px; color:#4a5b73;">Update Status:</label>
+                        <select class="worker-status-select" onchange="workerChangeStatus(${c.id}, this.value)">
+                            <option value="Pending" ${c.status === "Pending" ? "selected" : ""}>Pending</option>
+                            <option value="In Progress" ${c.status === "In Progress" ? "selected" : ""}>In Progress</option>
+                            <option value="Resolved" ${c.status === "Resolved" ? "selected" : ""}>Resolved</option>
+                        </select>
+                    </div>
+
+                    <button type="button"
+                       onclick="sendWorkerWhatsAppMessage(${c.id})"
+                       class="btn"
+                       style="margin-top:0; padding:8px 14px; font-size:13px; background:#25d366; color:white; display:inline-flex; align-items:center; gap:6px;">
+                        💬 Send "FINISH OUR WORK" WhatsApp
+                    </button>
+                </div>
+            </div>
+        `;
+    });
+}
+
+function workerChangeStatus(id, newStatus){
+    const complaint = complaints.find(x => x.id === id);
+    if(complaint){
+        complaint.status = newStatus;
+        save();
+        displayAdmin();
+        displayComplaints();
+        displayWorkerCategories();
+        displayWorkerComplaints();
+
+        sendWorkerWhatsAppMessage(id, newStatus);
+    }
+}
+
+function sendWorkerWhatsAppMessage(id, explicitStatus){
+    const complaint = complaints.find(x => x.id === id);
+    if(!complaint) return;
+    const currentStatus = explicitStatus || complaint.status;
+    const whatsappMsg = "FINISH OUR WORK SIR AND THANK YOU \n\n"
+        + "Complaint ID: #" + complaint.id + "\n"
+        + "Title: " + complaint.title + "\n"
+        + "Category: " + (complaint.category || "General") + "\n"
+        + "Location: " + (complaint.place || "") + " (" + (complaint.floor || "") + ")\n"
+        + "Updated Status: " + currentStatus;
+
+    const whatsappUrl = "https://wa.me/919597415268?text=" + encodeURIComponent(whatsappMsg);
+    window.open(whatsappUrl, "_blank");
+}
+
+
+/* ADMIN */
+
+function displayAdmin(){
+
+updateStats();
+
+const box =
+document.getElementById("adminComplaints");
+
+const search =
+document.getElementById("adminSearch").value.toLowerCase().replace(/^#/,"");
+
+const filtered = complaints.filter(c =>
+c.id.toString().includes(search) ||
+c.title.toLowerCase().includes(search) ||
+c.location.toLowerCase().includes(search) ||
+(c.place || "").toLowerCase().includes(search) ||
+(c.floor || "").toLowerCase().includes(search) ||
+(c.category || "").toLowerCase().includes(search)
+);
+
+box.innerHTML="";
+
+if(filtered.length === 0){
+
+box.innerHTML =
+"<p style='color:#777'>No complaints found.</p>";
+
+return;
+
+}
+
+filtered.forEach(c=>{
+
+let statusClass="pending";
+
+if(c.status==="In Progress")
+statusClass="progress";
+
+if(c.status==="Resolved")
+statusClass="resolved";
+
+
+box.innerHTML += `
+
+<div class="complaint">
+
+<div class="complaint-top">
+
+<div>
+
+<h3>${escapeHTML(c.title)}</h3>
+
+<p>
+#${c.id} • ${escapeHTML(c.name)}
+</p>
+
+<p>
+📍 ${escapeHTML(c.location)} • ${escapeHTML(c.place || "Place not specified")} • ${escapeHTML(c.floor || "Floor not specified")}
+</p>
+
+</div>
+
+<span class="badge ${statusClass}">
+${c.status}
+</span>
+
+</div>
+
+
+<p>
+<strong>Category:</strong>
+${escapeHTML(c.category)}
+</p>
+
+<p>
+<strong>Priority:</strong>
+${c.priority}
+</p>
+
+<p>
+<strong>Time:</strong>
+${escapeHTML(c.time || "Not specified")}
+</p>
+
+<p>
+${escapeHTML(c.description)}
+</p>
+
+${c.photo ? `<img class="complaint-photo" src="${escapeHTML(c.photo)}" alt="Uploaded complaint photo">` : ""}
+
+<label>Update Status</label>
+
+<select
+onchange="changeStatus(${c.id},this.value)"
+>
+
+<option
+${c.status==="Pending"?"selected":""}>
+Pending
+</option>
+
+<option
+${c.status==="In Progress"?"selected":""}>
+In Progress
+</option>
+
+<option
+${c.status==="Resolved"?"selected":""}>
+Resolved
+</option>
+
+</select>
+
+<div class="action-row">
+<button class="btn danger" type="button" onclick="deleteComplaint(${c.id})">
+Delete
+</button>
+</div>
+
+</div>
+
+`;
+
+});
+
+}
+
+
+function changeStatus(id,status){
+
+const complaint =
+complaints.find(x=>x.id===id);
+
+if(complaint){
+
+complaint.status=status;
+
+save();
+
+displayAdmin();
+
+displayComplaints();
+
+if(!document.getElementById("workers").classList.contains("hidden")){
+displayWorkerCategories();
+displayWorkerComplaints();
+}
+
+}
+
+}
+
+function deleteComplaint(id){
+
+const complaint =
+complaints.find(x=>x.id===id);
+
+if(!complaint) return;
+
+const confirmDelete =
+confirm("Delete complaint #" + id + " - " + complaint.title + "?");
+
+if(!confirmDelete) return;
+
+complaints = complaints.filter(x=>x.id!==id);
+
+save();
+
+displayAdmin();
+
+displayComplaints();
+
+if(!document.getElementById("workers").classList.contains("hidden")){
+displayWorkerCategories();
+displayWorkerComplaints();
+}
+
+}
+
+
+/* NAVIGATION */
+
+function toggleCornerMenu(){
+
+document
+.getElementById("cornerMenuPanel")
+.classList.toggle("open");
+
+}
+
+
+function cornerMenuAction(section){
+
+if(section === "complaints"){
+    showSection("home");
+    document.getElementById("dashboardCards").scrollIntoView({behavior:"smooth", block:"start"});
+    document.getElementById("cornerMenuPanel").classList.remove("open");
+    return;
+}
+
+if(section === "contact"){
+    showSection("home");
+    document.getElementById("contactDetails").scrollIntoView({behavior:"smooth", block:"start"});
+    document.getElementById("cornerMenuPanel").classList.remove("open");
+    return;
+}
+
+if(section === "hod"){
+    const message = encodeURIComponent(
+        "Hello HOD,\nI would like to share a campus concern / complaint regarding the college.\nPlease review and guide me."
+    );
+    window.open("https://wa.me/919597415268?text=" + message, "_blank");
+    document.getElementById("cornerMenuPanel").classList.remove("open");
+    return;
+}
+
+showSection(section);
+
+document.getElementById("cornerMenuPanel").classList.remove("open");
+
+if(section === "home" || section === "workers"){
+    window.scrollTo({top:0, behavior:"smooth"});
+}
+
+}
+
+function toggleAdminPassword(){
+
+const passwordInput =
+document.getElementById("adminPassword");
+
+const toggleButton =
+document.querySelector("#adminLoginForm .password-toggle");
+
+const isVisible = passwordInput.type === "text";
+
+passwordInput.type = isVisible ? "password" : "text";
+toggleButton.textContent = isVisible ? "👁" : "🙈";
+toggleButton.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+toggleButton.setAttribute("title", isVisible ? "Show password" : "Hide password");
+
+}
+
+function toggleWorkerPassword(){
+    const passwordInput = document.getElementById("workerPassword");
+    const toggleButton = document.querySelector(".worker-pwd-toggle");
+    if(!passwordInput || !toggleButton) return;
+    const isVisible = passwordInput.type === "text";
+    passwordInput.type = isVisible ? "password" : "text";
+    toggleButton.textContent = isVisible ? "👁" : "🙈";
+    toggleButton.setAttribute("aria-label", isVisible ? "Show password" : "Hide password");
+    toggleButton.setAttribute("title", isVisible ? "Show password" : "Hide password");
+}
+
+document
+.getElementById("adminLoginForm")
+.addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const username =
+document.getElementById("adminUsername").value.trim();
+
+const password =
+document.getElementById("adminPassword").value;
+
+const validAdmin =
+(username === "G BALAKRISHNAN" && password === "BALAKRISHNAN@01") ||
+(username === "T SUGASHINI" && password === "SUGASHINI@02") ||
+(username === "N VAIJEYANTHI" && password === "VAIJEYANTHI@03");
+
+if(!validAdmin){
+
+alert("Invalid admin name or password.");
+return;
+
+}
+
+adminAuthenticated = true;
+this.reset();
+showSection("admin");
+
+});
+
+document
+.getElementById("workersLoginForm")
+.addEventListener("submit", function(e){
+    e.preventDefault();
+
+    const username = document.getElementById("workerUsername").value;
+    const password = document.getElementById("workerPassword").value;
+
+    const matchedWorker = findAuthorizedWorker(username, password);
+
+    if(matchedWorker){
+        workerAuthenticated = true;
+        currentLoggedInWorker = matchedWorker;
+        this.reset();
+        showSection("workers");
+        if(matchedWorker.category && matchedWorker.category !== "All"){
+            selectWorkerCategory(matchedWorker.category);
+        } else {
+            selectWorkerCategory("All");
+        }
+    } else {
+        alert("Invalid worker username or password.");
+    }
+});
+
+function workerLogout(){
+    workerAuthenticated = false;
+    currentLoggedInWorker = null;
+    selectedWorkerCategory = "All";
+    showSection("home");
+}
+
+function showSection(section){
+
+document
+.getElementById("homePage")
+.classList.add("hidden");
+
+document
+.getElementById("student")
+.classList.add("hidden");
+
+document
+.getElementById("admin")
+.classList.add("hidden");
+
+document
+.getElementById("adminLogin")
+.classList.add("hidden");
+
+document
+.getElementById("workers")
+.classList.add("hidden");
+
+document
+.getElementById("workersLogin")
+.classList.add("hidden");
+
+document
+.getElementById("dashboardCards")
+.classList.toggle("hidden", section === "admin" || section === "adminLogin" || section === "workers" || section === "workersLogin");
+
+if(section === "admin" && !adminAuthenticated){
+
+document
+.getElementById("rewardBox")
+.classList.add("hidden");
+
+document
+.getElementById("adminLogin")
+.classList.remove("hidden");
+
+document.querySelectorAll("nav button").forEach(btn => {
+btn.classList.toggle("active", btn.dataset.role === "admin");
+});
+
+return;
+
+}
+
+if(section === "workers" && !workerAuthenticated){
+
+document
+.getElementById("rewardBox")
+.classList.add("hidden");
+
+document
+.getElementById("workersLogin")
+.classList.remove("hidden");
+
+document.querySelectorAll("nav button").forEach(btn => {
+btn.classList.toggle("active", btn.dataset.role === "workers");
+});
+
+return;
+
+}
+
+if(section === "home"){
+
+document
+.getElementById("homePage")
+.classList.remove("hidden");
+
+document
+.getElementById("rewardBox")
+.classList.remove("hidden");
+} else if(section === "workers"){
+
+document
+.getElementById("workers")
+.classList.remove("hidden");
+
+document
+.getElementById("rewardBox")
+.classList.add("hidden");
+
+const badge = document.getElementById("workerLoggedInBadge");
+if(badge){
+    if(currentLoggedInWorker){
+        badge.style.display = "inline-block";
+        badge.innerHTML = `👤 Logged in as: <strong>${currentLoggedInWorker.name}</strong> (${currentLoggedInWorker.role})`;
+    } else {
+        badge.style.display = "none";
+    }
+}
+
+displayWorkerCategories();
+displayWorkerComplaints();
+
+} else {
+
+document
+.getElementById(section)
+.classList.remove("hidden");
+
+document
+.getElementById("rewardBox")
+.classList.toggle("hidden", section !== "student");
+}
+
+document.querySelectorAll("nav button").forEach(btn => {
+btn.classList.toggle("active", btn.dataset.role === section);
+});
+
+if(section==="admin")
+displayAdmin();
+
+}
+
+
+function adminLogout(){
+
+adminAuthenticated = false;
+showSection("student");
+
+}
+
+
+/* BASIC HTML PROTECTION */
+
+function escapeHTML(text){
+
+return String(text)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* THEME CONTROLLER (LIGHT / DARK MODE) */
+function setAppTheme(theme){
+    const isDark = theme === "dark";
+    document.documentElement.classList.toggle("dark-mode", isDark);
+    if(document.body){
+        document.body.classList.toggle("dark-mode", isDark);
+    }
+
+    const lightBtn = document.getElementById("themeLightBtn");
+    const darkBtn = document.getElementById("themeDarkBtn");
+    if(lightBtn && darkBtn){
+        lightBtn.classList.toggle("active", !isDark);
+        darkBtn.classList.toggle("active", isDark);
+        lightBtn.setAttribute("aria-pressed", (!isDark).toString());
+        darkBtn.setAttribute("aria-pressed", isDark.toString());
+    }
+
+    try {
+        localStorage.setItem("igce_theme", theme);
+    } catch(err){}
+}
+
+function initTheme(){
+    let saved = null;
+    try {
+        saved = localStorage.getItem("igce_theme");
+    } catch(err){}
+
+    if(!saved){
+        if(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches){
+            saved = "dark";
+        } else {
+            saved = "light";
+        }
+    }
+    setAppTheme(saved);
+}
+
+if(window.matchMedia){
+    try {
+        window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function(e){
+            let saved = null;
+            try { saved = localStorage.getItem("igce_theme"); } catch(err){}
+            if(!saved){
+                setAppTheme(e.matches ? "dark" : "light");
+            }
+        });
+    } catch(e){}
+}
+
+initTheme();
+
+/* INITIAL LOAD */
+
+showSection("home");
+
+</script>
+
+</body>
+</html>
